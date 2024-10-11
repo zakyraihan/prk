@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
-import 'package:mysmk_prakerin/main_screen.dart';
-import 'package:mysmk_prakerin/screen/lupa_password_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mysmk_prakerin/router/router_name.dart';
+import 'package:mysmk_prakerin/service/auth_service.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,7 +12,59 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passController = TextEditingController();
+
   bool _obscurePassword = true;
+  bool isloading = false;
+
+  void actionLogin() {
+    if (emailController.text != "" && passController.text != "") {
+      setState(() {
+        isloading = !isloading;
+      });
+      AuthService()
+          .prosesLogin(emailController.text, passController.text)
+          .then((value) {
+        setState(() {
+          if (value is! String) {
+            print("berhasil");
+            setState(() {
+              isloading = !isloading;
+            });
+            // Navigator.pushReplacementNamed(context, '/Dashboard',
+            //     arguments: value);
+            context.goNamed(Routes.main, extra: value);
+          } else {
+            gagalLogin(value);
+            setState(() {
+              isloading = !isloading;
+            });
+          }
+        });
+      });
+    } else {
+      gagalLogin("Harap Masukkan Email & Password dengan benar");
+    }
+  }
+
+  void gagalLogin(String pesan) {
+    Alert(
+        context: context,
+        title: "Login Gagal",
+        desc: pesan,
+        type: AlertType.error,
+        buttons: [
+          DialogButton(
+              color: Colors.red,
+              // ignore: prefer_const_constructors
+              child: Text("OK",
+                  style: const TextStyle(color: Colors.white, fontSize: 26)),
+              onPressed: () {
+                context.pop();
+              })
+        ]).show();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +93,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 8),
                     TextField(
+                      controller: emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         hintText: 'Masukkan email anda',
@@ -65,6 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 8),
                     TextField(
+                      controller: passController,
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         hintText: 'Masukkan password anda',
@@ -94,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                   width: lebar,
                   child: ElevatedButton(
                     onPressed: () {
-                      Get.to(() => const MainScreen());
+                      actionLogin();
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -103,17 +158,18 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       backgroundColor: Colors.green,
                     ),
-                    child: const Text(
-                      'Masuk',
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
+                    child: isloading
+                        ? const CircularProgressIndicator()
+                        : const Text(
+                            'Masuk',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 20),
 
-
                 TextButton(
-                  onPressed: () => Get.to(() => const ForgotPasswordPage()),
+                  onPressed: () => {},
                   child: const Text('Lupa password?'),
                 ),
               ],

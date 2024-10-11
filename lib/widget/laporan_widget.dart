@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mysmk_prakerin/screen/buat_jurnal_harian_pkl.dart';
+import 'package:mysmk_prakerin/screen/laporan_diniyah_harian.dart';
 
 class LaporanWidget extends StatefulWidget {
   const LaporanWidget({super.key});
@@ -38,49 +40,104 @@ class _LaporanWidgetState extends State<LaporanWidget> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: List.generate(
-              10,
-              (index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+          child: Column(children: [
+            _customButton('+', Colors.blue, () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    content: Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  contentPadding: EdgeInsets.zero,
+                                  content: SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.9,
+                                    height:
+                                        MediaQuery.of(context).size.height *
+                                            0.8,
+                                    child: const BuatJurnalHarianPkl(),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: const Text("Laporan PKL"),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  content: SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.9, // Adjust width
+                                    child:
+                                        const LaporanDiniyyahHarian(), // Insert the form widget here
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: const Text("Laporan Diniyah"),
+                        ),
+                      ],
                     ),
-                    elevation: 5,
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.all(10),
-                      leading: Container(
-                        height: 120,
-                        width: 70,
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                  );
+                },
+              );
+            }),
+            Wrap(
+              children: List.generate(
+                10,
+                (index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      title: const Text(
-                        'Membaca Alquran',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                      elevation: 5,
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(10),
+                        leading: Container(
+                          height: 120,
+                          width: 70,
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
-                      ),
-                      subtitle: const Text(
-                        '28 Agustus 2024',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
+                        title: const Text(
+                          'Membaca Alquran',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
+                        subtitle: const Text(
+                          '28 Agustus 2024',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
+          ]),
         ),
       ),
     );

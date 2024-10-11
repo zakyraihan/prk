@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
-import 'package:mysmk_prakerin/screen/buat_jurnal_harian_pkl.dart';
-import 'package:mysmk_prakerin/screen/laporan_diniyah_harian.dart';
-import 'package:mysmk_prakerin/widget/laporan_widget.dart';
 
 class Laporan {
   final String title;
@@ -155,7 +151,7 @@ class _JurnalPKLState extends State<JurnalPKL> {
                   Builder(builder: (context) {
                     return InkWell(
                       onTap: () {
-                        Get.to(() => const LaporanWidget());
+                        // Get.to(() => const LaporanWidget());
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -216,72 +212,6 @@ class _JurnalPKLState extends State<JurnalPKL> {
                               fontSize: 12,
                             ),
                           ),
-                          trailing: _customButton('+', Colors.blue, () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  content: Container(
-                                    child: Row(
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            // Menampilkan dialog yang berisi BuatJurnalHarianPkl dengan TabBar
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  contentPadding: EdgeInsets
-                                                      .zero, // Untuk menghilangkan padding default dari AlertDialog
-                                                  content: SizedBox(
-                                                    width: MediaQuery.of(
-                                                                context)
-                                                            .size
-                                                            .width *
-                                                        0.9, // Ukuran dialog
-                                                    height: MediaQuery.of(
-                                                                context)
-                                                            .size
-                                                            .height *
-                                                        0.8, // Tinggi dialog
-                                                    child:
-                                                        const BuatJurnalHarianPkl(), // Memanggil widget yang berisi TabBar
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: const Text("Laporan PKL"),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  content: SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.9, // Adjust width
-                                                    child:
-                                                        const LaporanDiniyyahHarian(), // Insert the form widget here
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: const Text("Laporan Diniyah"),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          }),
                         ),
                       ),
                     );
