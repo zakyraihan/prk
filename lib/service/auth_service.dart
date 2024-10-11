@@ -8,7 +8,8 @@ import 'package:mysmk_prakerin/model/profile_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  static const String _baseUrl = 'https://backend-mysmk-dev.smkmadinatulquran.sch.id';
+  static const String _baseUrl =
+      'https://backend-mysmk-dev.smkmadinatulquran.sch.id';
 
   Future prosesLogin(String email, String password) async {
     Uri urlApi = Uri.parse("$_baseUrl/login");
@@ -55,7 +56,7 @@ class AuthService {
   }
 
   Future authMe({context}) async {
-    Uri urlApi = Uri.parse("${_baseUrl}authme");
+    Uri urlApi = Uri.parse("$_baseUrl/authme");
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? dataLogin = preferences.getString('login');
 
