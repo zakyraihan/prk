@@ -3,4 +3,7 @@ abstract class Routes {
   static const login = 'login';
   static const main = 'main';
   static const profile = 'profile';
+  static const laporanPkl = 'laporanPkl';
+  static const detailLaporanPkl = 'detail_laporan';
+  static const buatJurnalPkl = 'buatJurnalPkl';
 }

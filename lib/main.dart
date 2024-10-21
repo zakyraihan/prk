@@ -3,7 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:mysmk_prakerin/provider/camera_provider.dart';
 import 'package:mysmk_prakerin/router/router.dart';
+import 'package:provider/provider.dart';
 
 Future main() async {
   await dotenv.load(fileName: '.env');
@@ -16,9 +18,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: router,
+    return ChangeNotifierProvider(
+      create: (context) => CameraProvider(),
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerConfig: router,
+      ),
     );
   }
 }

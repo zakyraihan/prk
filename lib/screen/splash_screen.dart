@@ -20,73 +20,61 @@ class SplashScreenView extends StatefulWidget {
 }
 
 class _SplashScreenView extends State<SplashScreenView> {
-  bool status = true;
+ bool status = true;
 
-  startSplashScreen() async {
+  @override
+  void initState() {
+    super.initState();
+    startSplashScreen();
+  }
+
+  void startSplashScreen() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? tgl = preferences.getString('tanggalLogin');
-    if (tgl != "" && tgl != null) {
+    DateTime tglskrg = DateTime.now();
+    var duration = const Duration(seconds: 3);
+
+    // Cek jika tanggal login valid
+    if (tgl != null && tgl.isNotEmpty) {
       DateTime tanggal = DateTime.parse(tgl);
-      DateTime tglskrg = DateTime.now();
-      DateTime tglExp = DateTime(tanggal.year, tanggal.month, tanggal.day + 6);
+      DateTime tglExp = tanggal.add(const Duration(days: 6));
       bool cekTanggal = tglskrg.isBefore(tglExp);
+
       if (!cekTanggal) {
-        await AuthService().authMe(context: context).then((value) {
-          if (!value) {
-            gagalAuth();
-          } else {
-            setState(() {
-              status = true;
-            });
-          }
-        });
+        bool isAuthValid = await AuthService().authMe(context: context);
+        if (!isAuthValid) {
+          return gagalAuth();
+        }
       }
     }
 
+    // Cek status login
     String? dataLogin = preferences.getString('login');
-    var duration = const Duration(seconds: 3);
-
-    if (dataLogin == "" || dataLogin == null) {
-      return Timer(duration, () {
-        if (status) {
-          context.goNamed(Routes.login);
-        }
-      });
+    if (dataLogin == null || dataLogin.isEmpty) {
+      Timer(duration, () => context.goNamed(Routes.login));
     } else {
       LoginModel data = loginModelFromJson(dataLogin);
-      return Timer(duration, () {
-        if (status) {
-          context.goNamed(Routes.main, extra: data);
-        }
-      });
+      Timer(duration, () => context.goNamed(Routes.main, extra: data));
     }
   }
 
   void gagalAuth() {
-    setState(() {
-      status = false;
-    });
+    setState(() => status = false);
     Alert(
-        context: context,
-        title: "Pengambilan Data Gagal",
-        desc: "Harap nyalakan paket data / restart aplikasinya",
-        type: AlertType.error,
-        buttons: [
-          DialogButton(
-              color: Colors.red,
-              child: Text("OK",
-                  style: TextStyle(color: Colors.white, fontSize: 26)),
-              onPressed: () {
-                int count = 0;
-                context.pop();
-                context.goNamed(Routes.login);
-              })
-        ]).show();
-  }
-
-  void initState() {
-    super.initState();
-    startSplashScreen();
+      context: context,
+      title: "Pengambilan Data Gagal",
+      desc: "Harap nyalakan paket data / restart aplikasinya",
+      type: AlertType.error,
+      buttons: [
+        DialogButton(
+          color: Colors.red,
+          child: Text("OK", style: TextStyle(color: Colors.white, fontSize: 26)),
+          onPressed: () {
+            context.goNamed(Routes.login);
+          },
+        )
+      ],
+    ).show();
   }
 
   @override

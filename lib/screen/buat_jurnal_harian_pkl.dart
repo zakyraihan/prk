@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mysmk_prakerin/model/create_laporan_model.dart';
+import 'package:mysmk_prakerin/service/laporanpkl_service.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class BuatJurnalHarianPkl extends StatefulWidget {
   const BuatJurnalHarianPkl({super.key});
@@ -14,16 +17,80 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _judulController = TextEditingController();
-  final TextEditingController _deskripsiController = TextEditingController();
+
   DateTime? _selectedDate;
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
+
+  final TextEditingController judulController = TextEditingController();
+  final TextEditingController isiController = TextEditingController();
+
+  bool _isSubmitted = false; // Track submission status
+
+  void createProses() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      DataCreateLaporan laporan = DataCreateLaporan(
+        judulKegiatan: judulController.text,
+        isiLaporan: isiController.text,
+        foto: _imageFile?.path, // Update to use the correct file path
+        longtitude: 8090,
+        latitude: 8090,
+        tanggal: _selectedDate,
+      );
+
+      var result = await LaporanpklService().createLaporan(laporan);
+
+      if (result != null) {
+        setState(() {
+          _isSubmitted = true; // Set submitted status
+        });
+
+        Alert(
+          context: context,
+          title: "Berhasil menambahkan laporan",
+          desc: "Alhamdulillah laporan berhasil dibuat",
+          type: AlertType.success,
+          buttons: [
+            DialogButton(
+              child: const Text(
+                "OK",
+                style: TextStyle(color: Colors.white, fontSize: 26),
+              ),
+              onPressed: () {
+                int jmlPop = 0;
+                Navigator.of(context).popUntil((_) => jmlPop++ >= 2);
+              },
+            ),
+          ],
+        ).show();
+      } else {
+        Alert(
+          context: context,
+          title: "Tambah Laporan Gagal",
+          desc: "Qodarullah gagal menambahkan laporan",
+          type: AlertType.error,
+          buttons: [
+            DialogButton(
+              color: Colors.red,
+              child: const Text(
+                "OK",
+                style: TextStyle(color: Colors.white, fontSize: 26),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ).show();
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _selectedDate = DateTime.now();
   }
 
   Future<void> _pickImage() async {
@@ -52,8 +119,8 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
   @override
   void dispose() {
     _tabController.dispose();
-    _judulController.dispose();
-    _deskripsiController.dispose();
+    judulController.dispose();
+    isiController.dispose();
     super.dispose();
   }
 
@@ -63,12 +130,6 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Buat Jurnal Harian PKL'),
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     // Action for back button
-        //   },
-        // ),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.green,
@@ -82,52 +143,13 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
         controller: _tabController,
         children: [
           _buildFormPKL(context, lebar),
-          _buildFormIzin(
-              context, lebar), // Add different forms for Izin if needed
+          _buildFormIzin(context, lebar),
         ],
       ),
     );
   }
 
-  Widget _buildFormPKL(BuildContext context, lebar) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTextInput('Judul Jurnal Harian', _judulController,
-                  'Masukkan judul jurnal'),
-              const SizedBox(height: 16),
-              _buildDatePicker(context),
-              const SizedBox(height: 16),
-              _buildImagePicker(),
-              const SizedBox(height: 16),
-              _buildTextArea('Deskripsi Jurnal Harian', _deskripsiController,
-                  'Apa yang antum kerjakan hari ini?'),
-              const SizedBox(height: 20),
-              Container(
-                alignment: Alignment.center,
-                width: lebar,
-                padding: const EdgeInsets.symmetric(vertical: 13),
-                decoration: const BoxDecoration(color: Colors.green),
-                child:
-                    const Text('Submit', style: TextStyle(color: Colors.white)),
-              ),
-              const Text(
-                'Anda Harus Berada dalam Jarak 1km dari Perusahaan Anda',
-                style: TextStyle(color: Colors.red),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFormIzin(BuildContext context, lebar) {
+  Widget _buildFormPKL(BuildContext context, double lebar) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Form(
@@ -137,22 +159,75 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildTextInput(
-                  'Alasan Izin', _judulController, 'Masukkan Alasan izin'),
+                'Judul Jurnal Harian',
+                judulController,
+                'Masukkan judul jurnal',
+              ),
+              const SizedBox(height: 16),
+              _buildDatePicker(context),
+              const SizedBox(height: 16),
+              _buildImagePicker(),
+              const SizedBox(height: 16),
+              _buildTextArea('Deskripsi Jurnal Harian', isiController,
+                  'Apa yang antum kerjakan hari ini?'),
+              const SizedBox(height: 20),
+              InkWell(
+                onTap:
+                    _isSubmitted ? null : createProses, // Disable if submitted
+                child: Container(
+                  alignment: Alignment.center,
+                  width: lebar,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  decoration: BoxDecoration(
+                    color: _isSubmitted
+                        ? Colors.grey
+                        : Colors.green, // Change color if disabled
+                  ),
+                  child: const Text('Submit',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFormIzin(BuildContext context, double lebar) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTextInput(
+                  'Alasan Izin', isiController, 'Masukkan Alasan izin'),
               const SizedBox(height: 16),
               _buildDatePicker(context),
               const SizedBox(height: 16),
               _buildImagePicker(),
               const SizedBox(height: 16),
               _buildTextArea(
-                  'Deskripsi Izin', _deskripsiController, 'Deskripsi izin?'),
+                  'Deskripsi Izin', judulController, 'Deskripsi izin?'),
               const SizedBox(height: 20),
-              Container(
-                alignment: Alignment.center,
-                width: lebar,
-                padding: const EdgeInsets.symmetric(vertical: 13),
-                decoration: const BoxDecoration(color: Colors.green),
-                child:
-                    const Text('Submit', style: TextStyle(color: Colors.white)),
+              InkWell(
+                onTap:
+                    _isSubmitted ? null : createProses, // Disable if submitted
+                child: Container(
+                  alignment: Alignment.center,
+                  width: lebar,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  decoration: BoxDecoration(
+                    color: _isSubmitted
+                        ? Colors.grey
+                        : Colors.green, // Change color if disabled
+                  ),
+                  child: const Text('Submit',
+                      style: TextStyle(color: Colors.white)),
+                ),
               ),
             ],
           ),
@@ -223,20 +298,20 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
       children: [
         const Text('Bukti'),
         const SizedBox(height: 5),
-        GestureDetector(
+        InkWell(
           onTap: _pickImage,
           child: Container(
-            height: 150,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey, style: BorderStyle.solid),
+              border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(8.0),
             ),
-            child: Center(
-              child: _imageFile == null
-                  ? const Text('Upload File',
-                      style: TextStyle(color: Colors.grey))
-                  : Image.file(_imageFile!, fit: BoxFit.cover),
-            ),
+            height: 150,
+            child: _imageFile == null
+                ? const Center(child: Text('Pilih Gambar'))
+                : Image.file(
+                    _imageFile!,
+                    fit: BoxFit.cover,
+                  ),
           ),
         ),
       ],
@@ -258,8 +333,7 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {

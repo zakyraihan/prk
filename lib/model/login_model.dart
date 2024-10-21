@@ -8,77 +8,81 @@ String loginModelToJson(LoginModel data) => json.encode(data.toJson());
 class LoginModel {
   String status;
   String msg;
-  User user;
+  User? user; // User can be nullable if the JSON might not contain it
   String role;
   String token;
 
   LoginModel({
     required this.status,
     required this.msg,
-    required this.user,
     required this.role,
     required this.token,
+    this.user,
   });
 
   factory LoginModel.fromJson(Map<String, dynamic> json) => LoginModel(
-        status: json["status"],
-        msg: json["msg"],
-        user: User.fromJson(json["user"]),
-        role: json["role"],
-        token: json["token"],
+        status: json["status"] ?? "", // Default to empty string if null
+        msg: json["msg"] ?? "",
+        user: json["user"] != null ? User.fromJson(json["user"]) : null,
+        role: json["role"] ?? "",
+        token: json["token"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
         "status": status,
         "msg": msg,
-        "user": user.toJson(),
+        "user": user?.toJson(),
         "role": role,
         "token": token,
       };
 }
 
 class User {
-  int id;
-  String name;
-  String email;
-  String password;
-  String role;
+  int? id;
+  String? name;
+  String? email;
+  String? password;
+  String? role;
   dynamic image;
-  bool emailVerified;
-  String status;
+  bool? emailVerified;
+  String? status;
   dynamic noHp;
   dynamic notif;
-  DateTime createdAt;
-  DateTime updatedAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   User({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.password,
-    required this.role,
-    required this.image,
-    required this.emailVerified,
-    required this.status,
-    required this.noHp,
-    required this.notif,
-    required this.createdAt,
-    required this.updatedAt,
+    this.id,
+    this.name,
+    this.email,
+    this.password,
+    this.role,
+    this.image,
+    this.emailVerified,
+    this.status,
+    this.noHp,
+    this.notif,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-        id: json["id"],
-        name: json["name"],
-        email: json["email"],
-        password: json["password"],
-        role: json["role"],
+        id: json["id"] as int?,
+        name: json["name"] as String?,
+        email: json["email"] as String?,
+        password: json["password"] as String?,
+        role: json["role"] as String?,
         image: json["image"],
-        emailVerified: json["email_verified"],
-        status: json["status"],
+        emailVerified: json["email_verified"] as bool?,
+        status: json["status"] as String?,
         noHp: json["no_hp"],
         notif: json["notif"],
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
+        createdAt: json["createdAt"] != null
+            ? DateTime.tryParse(json["createdAt"])
+            : null,
+        updatedAt: json["updatedAt"] != null
+            ? DateTime.tryParse(json["updatedAt"])
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -92,7 +96,7 @@ class User {
         "status": status,
         "no_hp": noHp,
         "notif": notif,
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
+        "createdAt": createdAt?.toIso8601String(),
+        "updatedAt": updatedAt?.toIso8601String(),
       };
 }

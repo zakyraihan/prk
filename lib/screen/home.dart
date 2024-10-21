@@ -1,16 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-
-class Laporan {
-  final String title;
-  final String description;
-  final String date;
-
-  Laporan({
-    required this.title,
-    required this.description,
-    required this.date,
-  });
-}
+import 'package:go_router/go_router.dart';
+import 'package:mysmk_prakerin/model/laporanpkl_model.dart';
+import 'package:mysmk_prakerin/router/router_name.dart';
+import 'package:mysmk_prakerin/screen/detail_laporan_screen.dart';
+import 'package:mysmk_prakerin/service/laporanpkl_service.dart';
+import 'package:mysmk_prakerin/widget/laporan_widget_card.dart';
 
 class Tugas {
   final String namaTugas;
@@ -32,23 +28,25 @@ class JurnalPKL extends StatefulWidget {
 }
 
 class _JurnalPKLState extends State<JurnalPKL> {
-  final List<Laporan> laporanList = [
-    Laporan(
-      title: 'Membaca Alquran',
-      description: 'Membaca Alquran Juz 1',
-      date: '28 Agustus 2024',
-    ),
-    Laporan(
-      title: 'Mengerjakan Tugas Matematika',
-      description: 'Tugas Aljabar',
-      date: '29 Agustus 2024',
-    ),
-    Laporan(
-      title: 'Menghafal Hadis',
-      description: 'Menghafal Hadis tentang Puasa',
-      date: '30 Agustus 2024',
-    ),
-  ];
+  List<DataLaporann> _originalData = [];
+  bool isFetching = false;
+
+  Future _fetchData() async {
+    setState(() {
+      isFetching = true;
+    });
+    try {
+      final data = await LaporanpklService().getLaporanPkl();
+      setState(() {
+        _originalData = data;
+      });
+    } catch (e) {
+      log('$e');
+    }
+    setState(() {
+      isFetching = false;
+    });
+  }
 
   // Contoh daftar tugas
   final List<Tugas> tugasList = [
@@ -89,6 +87,12 @@ class _JurnalPKLState extends State<JurnalPKL> {
 
   final List<String> items = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
   String? selectedValue;
+
+  @override
+  void initState() {
+    _fetchData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +136,8 @@ class _JurnalPKLState extends State<JurnalPKL> {
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
-                      'Prakerin bukan hanya tentang bekerja, tetapi juga tentang menemukan minat dan potensi dirimu. Manfaatkan setiap momen untuk mengeksplorasi hal-hal baru.',
+                      '',
+                      // 'Prakerin bukan hanya tentang bekerja, tetapi juga tentang menemukan minat dan potensi dirimu. Manfaatkan setiap momen untuk mengeksplorasi hal-hal baru.',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -151,7 +156,7 @@ class _JurnalPKLState extends State<JurnalPKL> {
                   Builder(builder: (context) {
                     return InkWell(
                       onTap: () {
-                        // Get.to(() => const LaporanWidget());
+                        context.goNamed(Routes.laporanPkl);
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -172,53 +177,27 @@ class _JurnalPKLState extends State<JurnalPKL> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                children: List.generate(
-                  laporanList.length,
-                  (index) {
-                    final laporan = laporanList[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        elevation: 5,
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(10),
-                          leading: Container(
-                            height: 120,
-                            width: 70,
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(8),
+            isFetching
+                ? const Center(child: CircularProgressIndicator())
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: _originalData.isNotEmpty
+                        ? Wrap(
+                            children: List.generate(
+                              _originalData.length,
+                              (index) => buildLaporanCard(
+                                _originalData[index],
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DetailLaporanScreen(
+                                        id: _originalData[index].id.toString()),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                          title: Text(
-                            laporan.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                          subtitle: Text(
-                            laporan.date,
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
+                          )
+                        : const Text('tidak ada data')),
             const Divider(
               height: 10,
             ),

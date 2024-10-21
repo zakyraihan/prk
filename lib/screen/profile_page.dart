@@ -118,38 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         title: const Text('Detail Profile'),
                         trailing: const Icon(Icons.arrow_forward_ios),
                         onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                content: SizedBox(
-                                  height: 300,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('NAMA: ${_dataProfile!.namaSiswa}'),
-                                      Text('NIS: ${_dataProfile!.nis}'),
-                                      Text('NISN: ${_dataProfile!.nisn}'),
-                                      Text(
-                                          'TEMPAT LAHIR: ${_dataProfile!.tempatLahir}'),
-                                      Text(
-                                          'TANGGAL LAHIR: ${_dataProfile!.tanggalLahir}'),
-                                      Text('ALAMAT: ${_dataProfile!.alamat}'),
-                                      Text(
-                                          'SEKOLAH ASAL: ${_dataProfile!.sekolahAsal}'),
-                                      Text(
-                                          'JENIS KELAMIN: ${_dataProfile!.jenisKelamin}'),
-                                      Text(
-                                          'TANGGAL DITERIMA: ${_dataProfile!.tanggalDiterima}'),
-                                      Text(
-                                          'ANGKATAN: ${_dataProfile!.angkatan} / ${_dataProfile!.tahunAjaran}'),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
+                          dialogDetailProfile(context);
                         },
                       ),
                       ListTile(
@@ -188,7 +157,36 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Method to display the password change dialog
+  Future<dynamic> dialogDetailProfile(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: SizedBox(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('NAMA: ${_dataProfile!.namaSiswa}'),
+                  Text('NIS: ${_dataProfile!.nis}'),
+                  Text('NISN: ${_dataProfile!.nisn}'),
+                  Text('TEMPAT LAHIR: ${_dataProfile!.tempatLahir}'),
+                  Text('TANGGAL LAHIR: ${_dataProfile!.tanggalLahir}'),
+                  Text('ALAMAT: ${_dataProfile!.alamat}'),
+                  Text('SEKOLAH ASAL: ${_dataProfile!.sekolahAsal}'),
+                  Text('JENIS KELAMIN: ${_dataProfile!.jenisKelamin}'),
+                  Text('TANGGAL DITERIMA: ${_dataProfile!.tanggalDiterima}'),
+                  Text(
+                      'ANGKATAN: ${_dataProfile!.angkatan} / ${_dataProfile!.tahunAjaran}'),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _showChangePasswordDialog(BuildContext context) {
     showDialog(
       context: context,

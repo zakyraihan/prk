@@ -1,6 +1,9 @@
 import 'package:go_router/go_router.dart';
 import 'package:mysmk_prakerin/main_screen.dart';
 import 'package:mysmk_prakerin/router/router_name.dart';
+import 'package:mysmk_prakerin/screen/buat_jurnal_harian_pkl.dart';
+import 'package:mysmk_prakerin/screen/detail_laporan_screen.dart';
+import 'package:mysmk_prakerin/screen/laporan_screen.dart';
 import 'package:mysmk_prakerin/screen/login.dart';
 import 'package:mysmk_prakerin/screen/splash_screen.dart';
 
@@ -10,7 +13,7 @@ final router = GoRouter(
       path: '/',
       name: Routes.splash,
       builder: (context, state) {
-        return  SplashScreenView();
+        return SplashScreenView();
       },
     ),
     GoRoute(
@@ -26,6 +29,23 @@ final router = GoRouter(
       builder: (context, state) {
         return const MainScreen();
       },
+      routes: [
+        GoRoute(
+          path: '/laporanPkl',
+          name: Routes.laporanPkl,
+          builder: (context, state) {
+            return const LaporanWidget();
+          },
+        ),
+        GoRoute(
+          path: '/buatJurnalPkl',
+          name: Routes.buatJurnalPkl,
+          builder: (context, state) {
+            return const BuatJurnalHarianPkl();
+          },
+        ),
+       
+      ],
     ),
   ],
 );
