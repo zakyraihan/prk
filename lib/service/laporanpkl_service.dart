@@ -138,6 +138,7 @@ class LaporanpklService {
       "foto": laporan.foto,
       "longtitude": laporan.longtitude,
       "latitude": laporan.latitude,
+      "status": laporan.status,
       "student_id": laporan.studentId,
       "tanggal": laporan.tanggal?.toIso8601String(),
     };

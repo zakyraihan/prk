@@ -2,11 +2,9 @@ import 'dart:convert';
 
 import 'package:mysmk_prakerin/model/profile_model.dart';
 
-LaporanPrakerin laporanPrakerinFromJson(String str) =>
-    LaporanPrakerin.fromJson(json.decode(str));
+LaporanPrakerin laporanPrakerinFromJson(String str) => LaporanPrakerin.fromJson(json.decode(str));
 
-String laporanPrakerinToJson(LaporanPrakerin data) =>
-    json.encode(data.toJson());
+String laporanPrakerinToJson(LaporanPrakerin data) => json.encode(data.toJson());
 
 class LaporanPrakerin {
   String? status;

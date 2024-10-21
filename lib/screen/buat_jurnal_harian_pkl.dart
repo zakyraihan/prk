@@ -25,26 +25,21 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
   final TextEditingController judulController = TextEditingController();
   final TextEditingController isiController = TextEditingController();
 
-  bool _isSubmitted = false; // Track submission status
-
   void createProses() async {
     if (_formKey.currentState?.validate() ?? false) {
       DataCreateLaporan laporan = DataCreateLaporan(
         judulKegiatan: judulController.text,
         isiLaporan: isiController.text,
-        foto: _imageFile?.path, // Update to use the correct file path
+        foto: '_imageFile?.path',
         longtitude: 8090,
         latitude: 8090,
         tanggal: _selectedDate,
+        status: 'hadir',
       );
 
       var result = await LaporanpklService().createLaporan(laporan);
 
       if (result != null) {
-        setState(() {
-          _isSubmitted = true; // Set submitted status
-        });
-
         Alert(
           context: context,
           title: "Berhasil menambahkan laporan",
@@ -149,7 +144,7 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
     );
   }
 
-  Widget _buildFormPKL(BuildContext context, double lebar) {
+  Widget _buildFormPKL(BuildContext context, lebar) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Form(
@@ -172,17 +167,12 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
                   'Apa yang antum kerjakan hari ini?'),
               const SizedBox(height: 20),
               InkWell(
-                onTap:
-                    _isSubmitted ? null : createProses, // Disable if submitted
+                onTap: createProses,
                 child: Container(
                   alignment: Alignment.center,
                   width: lebar,
                   padding: const EdgeInsets.symmetric(vertical: 13),
-                  decoration: BoxDecoration(
-                    color: _isSubmitted
-                        ? Colors.grey
-                        : Colors.green, // Change color if disabled
-                  ),
+                  decoration: const BoxDecoration(color: Colors.green),
                   child: const Text('Submit',
                       style: TextStyle(color: Colors.white)),
                 ),
@@ -194,7 +184,7 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
     );
   }
 
-  Widget _buildFormIzin(BuildContext context, double lebar) {
+  Widget _buildFormIzin(BuildContext context, lebar) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Form(
@@ -214,17 +204,12 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
                   'Deskripsi Izin', judulController, 'Deskripsi izin?'),
               const SizedBox(height: 20),
               InkWell(
-                onTap:
-                    _isSubmitted ? null : createProses, // Disable if submitted
+                onTap: createProses, // Call createProses on submit
                 child: Container(
                   alignment: Alignment.center,
                   width: lebar,
                   padding: const EdgeInsets.symmetric(vertical: 13),
-                  decoration: BoxDecoration(
-                    color: _isSubmitted
-                        ? Colors.grey
-                        : Colors.green, // Change color if disabled
-                  ),
+                  decoration: const BoxDecoration(color: Colors.green),
                   child: const Text('Submit',
                       style: TextStyle(color: Colors.white)),
                 ),
@@ -305,13 +290,18 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(8.0),
             ),
-            height: 150,
-            child: _imageFile == null
-                ? const Center(child: Text('Pilih Gambar'))
-                : Image.file(
-                    _imageFile!,
-                    fit: BoxFit.cover,
-                  ),
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                _imageFile == null
+                    ? const Text('Pilih Gambar')
+                    : Image.file(
+                        _imageFile!,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+              ],
+            ),
           ),
         ),
       ],
@@ -327,7 +317,7 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
         const SizedBox(height: 5),
         TextFormField(
           controller: controller,
-          maxLines: 4,
+          maxLines: 5,
           decoration: InputDecoration(
             hintText: hint,
             border: OutlineInputBorder(
