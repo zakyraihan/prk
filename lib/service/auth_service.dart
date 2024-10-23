@@ -34,67 +34,61 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
-      // ignore: avoid_print
       print("Berhasil Login");
-      // Login data = loginFromJson(response.body.toString());
       try {
         DateTime tgl = DateTime.now();
         SharedPreferences preferences = await SharedPreferences.getInstance();
         preferences.setString("login", response.body.toString());
         preferences.setString("tanggalLogin", tgl.toString());
-        // preferences.commit();
-        // ignore: avoid_print
+
         print("data login saved");
       } catch (e) {
-        // ignore: avoid_print
         print("gagal save login");
       }
       LoginModel data = loginModelFromJson(response.body.toString());
       return data;
     } else {
-      // ignore: avoid_print
       print("Gagal Login");
       return loginGagalFromJson(response.body.toString()).msg;
     }
   }
 
   Future<bool> authMe({required BuildContext context}) async {
-  Uri urlApi = Uri.parse("$_baseUrl/authme");
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  String? dataLogin = preferences.getString('login');
+    Uri urlApi = Uri.parse("$_baseUrl/authme");
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? dataLogin = preferences.getString('login');
 
-  if (dataLogin == "" || dataLogin == null) {
-    log("Token tidak ditemukan atau kosong");
-    return false;
+    if (dataLogin == "" || dataLogin == null) {
+      log("Token tidak ditemukan atau kosong");
+      return false;
+    }
+
+    LoginModel data = loginModelFromJson(dataLogin);
+    String token = "Bearer ${data.token}";
+
+    final response = await http.get(
+      urlApi,
+      headers: {"X-Authorization": token},
+    );
+
+    if (response.statusCode == 200) {
+      DateTime tgl = DateTime.now();
+      preferences.setString("login", response.body.toString());
+      preferences.setString("tanggalLogin", tgl.toString());
+      log("Token diperbarui dan valid");
+      return true;
+    } else if (response.statusCode == 401) {
+      // Token expired, arahkan ke login
+      log("Token expired. Mengarahkan ke halaman login.");
+      await preferences.clear();
+      context.goNamed(Routes.login);
+      return false;
+    } else {
+      log("Gagal Authme: ${response.body}");
+      await preferences.clear();
+      return false;
+    }
   }
-
-  LoginModel data = loginModelFromJson(dataLogin);
-  String token = "Bearer ${data.token}";
-
-  final response = await http.get(
-    urlApi,
-    headers: {"X-Authorization": token},
-  );
-
-  if (response.statusCode == 200) {
-    DateTime tgl = DateTime.now();
-    preferences.setString("login", response.body.toString());
-    preferences.setString("tanggalLogin", tgl.toString());
-    log("Token diperbarui dan valid");
-    return true;
-  } else if (response.statusCode == 401) {
-    // Token expired, arahkan ke login
-    log("Token expired. Mengarahkan ke halaman login.");
-    await preferences.clear();
-    context.goNamed(Routes.login);
-    return false;
-  } else {
-    log("Gagal Authme: ${response.body}");
-    await preferences.clear();
-    return false;
-  }
-}
-
 
   Future getProfile() async {
     Uri url = Uri.parse('$_baseUrl/santri/profile');

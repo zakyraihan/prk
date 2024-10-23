@@ -1,11 +1,16 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:mysmk_prakerin/model/create_laporan_model.dart';
 import 'package:mysmk_prakerin/model/detail_laporanpkl_model.dart';
 import 'package:mysmk_prakerin/model/laporanpkl_model.dart';
 import 'package:mysmk_prakerin/model/login_model.dart';
+import 'package:mysmk_prakerin/router/router_name.dart';
+import 'package:mysmk_prakerin/utils/alert_dialog.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LaporanpklService {
@@ -127,19 +132,17 @@ class LaporanpklService {
   //   }
   // }
 
-  Future<LaporanUpdateResponse?> createLaporan(
-      DataCreateLaporan laporan) async {
+  Future createLaporan(BuildContext context, DataCreateLaporan laporan) async {
     final Uri url =
-        Uri.parse('http://172.10.50.71:8085/santri/laporan-harian-pkl/create');
+        Uri.parse('http://172.10.50.37:8085/santri/laporan-harian-pkl/create');
 
     final Map<String, dynamic> body = {
       "judul_kegiatan": laporan.judulKegiatan,
       "isi_laporan": laporan.isiLaporan,
-      "foto": laporan.foto,
+      "foto": "laporan.foto",
       "longtitude": laporan.longtitude,
       "latitude": laporan.latitude,
       "status": laporan.status,
-      "student_id": laporan.studentId,
       "tanggal": laporan.tanggal?.toIso8601String(),
     };
 
@@ -160,13 +163,33 @@ class LaporanpklService {
         "Content-Type": "application/json",
         "X-Authorization": token,
       },
-      body: json.encode(body),
+      body: jsonEncode(body),
     );
 
-    if (response.statusCode == 201 || response.statusCode == 200) {
-      return laporanUpdateResponseFromJson(response.body);
-    } else {
-      throw Exception('Failed to create laporan: ${response.reasonPhrase}');
+    final respondata = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (respondata['status'] == 'fail' && respondata['statusCode'] == 400) {
+        showAlert(
+          context,
+          'Gagal membuat Laporan',
+          "hanya bisa sekali buat",
+          AlertType.error,
+          onPressed: () => context.pop(),
+        );
+      } else {
+        showAlert(
+          context,
+          'Berhasil membuat Laporan',
+          "Berhasil membuat Laporan",
+          AlertType.success,
+          onPressed: () => context.pushReplacementNamed(Routes.main),
+        );
+
+        return laporanUpdateResponseFromJson(response.body);
+      }
     }
+
+    return null;
   }
 }

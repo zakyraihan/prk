@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:image_picker/image_picker.dart';
 
 // Function to parse the JSON response string
 LaporanUpdateResponse laporanUpdateResponseFromJson(String str) =>
@@ -51,7 +54,7 @@ class DataCreateLaporan {
   int? id;
   String? judulKegiatan;
   String? isiLaporan;
-  String? foto;
+  File? foto;
   double? longtitude;
   double? latitude;
   String? status;

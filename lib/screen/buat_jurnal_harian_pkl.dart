@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mysmk_prakerin/model/create_laporan_model.dart';
 import 'package:mysmk_prakerin/service/laporanpkl_service.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 
 class BuatJurnalHarianPkl extends StatefulWidget {
   const BuatJurnalHarianPkl({super.key});
@@ -25,60 +24,30 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
   final TextEditingController judulController = TextEditingController();
   final TextEditingController isiController = TextEditingController();
 
+  bool _isLoading = false;
+
   void createProses() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     if (_formKey.currentState?.validate() ?? false) {
       DataCreateLaporan laporan = DataCreateLaporan(
         judulKegiatan: judulController.text,
         isiLaporan: isiController.text,
-        foto: '_imageFile?.path',
+        foto: _imageFile,
         longtitude: 8090,
         latitude: 8090,
-        tanggal: _selectedDate,
         status: 'hadir',
+        tanggal: _selectedDate,
       );
 
-      var result = await LaporanpklService().createLaporan(laporan);
-
-      if (result != null) {
-        Alert(
-          context: context,
-          title: "Berhasil menambahkan laporan",
-          desc: "Alhamdulillah laporan berhasil dibuat",
-          type: AlertType.success,
-          buttons: [
-            DialogButton(
-              child: const Text(
-                "OK",
-                style: TextStyle(color: Colors.white, fontSize: 26),
-              ),
-              onPressed: () {
-                int jmlPop = 0;
-                Navigator.of(context).popUntil((_) => jmlPop++ >= 2);
-              },
-            ),
-          ],
-        ).show();
-      } else {
-        Alert(
-          context: context,
-          title: "Tambah Laporan Gagal",
-          desc: "Qodarullah gagal menambahkan laporan",
-          type: AlertType.error,
-          buttons: [
-            DialogButton(
-              color: Colors.red,
-              child: const Text(
-                "OK",
-                style: TextStyle(color: Colors.white, fontSize: 26),
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ).show();
-      }
+      await LaporanpklService().createLaporan(context, laporan);
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -173,8 +142,10 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
                   width: lebar,
                   padding: const EdgeInsets.symmetric(vertical: 13),
                   decoration: const BoxDecoration(color: Colors.green),
-                  child: const Text('Submit',
-                      style: TextStyle(color: Colors.white)),
+                  child: _isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Submit',
+                          style: TextStyle(color: Colors.white)),
                 ),
               ),
             ],

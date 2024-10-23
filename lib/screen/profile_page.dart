@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mysmk_prakerin/model/profile_model.dart';
 import 'package:mysmk_prakerin/router/router_name.dart';
 import 'package:mysmk_prakerin/service/auth_service.dart';
+import 'package:mysmk_prakerin/utils/alert_dialog.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -21,6 +23,8 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isLoading = true;
 
   Future fetchProfileData() async {
+    final prefs = await SharedPreferences.getInstance();
+
     try {
       final profile = await AuthService().getProfile();
       setState(() {
@@ -29,6 +33,16 @@ class _ProfilePageState extends State<ProfilePage> {
       });
     } catch (e) {
       log('$e');
+      showAlert(
+        context,
+        "Error",
+        "Akun bermasalah",
+        AlertType.error,
+        onPressed: () {
+          context.pushReplacementNamed(Routes.login);
+          prefs.remove('login');
+        },
+      );
       _isLoading = false;
     }
   }
