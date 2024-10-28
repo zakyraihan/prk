@@ -133,8 +133,8 @@ class LaporanpklService {
   // }
 
   Future createLaporan(BuildContext context, DataCreateLaporan laporan) async {
-    final Uri url =
-        Uri.parse('http://172.10.50.37:8085/santri/laporan-harian-pkl/create');
+    final Uri url = Uri.parse(
+        'http://192.168.8.86:8085/santri/laporan-harian-pkl/create');
 
     final Map<String, dynamic> body = {
       "judul_kegiatan": laporan.judulKegiatan,
@@ -172,16 +172,16 @@ class LaporanpklService {
       if (respondata['status'] == 'fail' && respondata['statusCode'] == 400) {
         showAlert(
           context,
-          'Gagal membuat Laporan',
-          "hanya bisa sekali buat",
+          respondata['msg'],
+          respondata['message'],
           AlertType.error,
           onPressed: () => context.pop(),
         );
       } else {
         showAlert(
           context,
-          'Berhasil membuat Laporan',
-          "Berhasil membuat Laporan",
+          respondata['msg'],
+          respondata['message'],
           AlertType.success,
           onPressed: () => context.pushReplacementNamed(Routes.main),
         );

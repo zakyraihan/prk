@@ -25,6 +25,7 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
   final TextEditingController isiController = TextEditingController();
 
   bool _isLoading = false;
+  bool status = true;
 
   void createProses() async {
     setState(() {
@@ -38,7 +39,7 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
         foto: _imageFile,
         longtitude: 8090,
         latitude: 8090,
-        status: 'hadir',
+        status: status.toString(),
         tanggal: _selectedDate,
       );
 
@@ -55,6 +56,7 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _selectedDate = DateTime.now();
+    status;
   }
 
   Future<void> _pickImage() async {

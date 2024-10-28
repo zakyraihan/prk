@@ -7,10 +7,10 @@ import 'package:mysmk_prakerin/provider/camera_provider.dart';
 import 'package:mysmk_prakerin/router/router.dart';
 import 'package:provider/provider.dart';
 
-Future main() async {
+Future<void> main() async {
   await dotenv.load(fileName: '.env');
-  await initializeDateFormatting('id_ID', null).then((_) => runApp(MyApp()));
-  runApp(const MyApp());
+  await initializeDateFormatting('id_ID', null);
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -23,6 +23,27 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         routerConfig: router,
+        builder: (context, child) {
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isWideScreen = constraints.maxWidth > 600;
+              const mobileWidth = 650.0;
+
+              return Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: isWideScreen ? mobileWidth : constraints.maxWidth,
+                    maxHeight: constraints.maxHeight, // Keep the full height
+                  ),
+                  child: Container(
+                    alignment: Alignment.topCenter, // Align content properly
+                    child: child,
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

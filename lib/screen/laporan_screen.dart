@@ -21,6 +21,7 @@ class _LaporanWidgetState extends State<LaporanWidget> {
   List<DataLaporann> _filterData = [];
   bool isFetching = false;
 
+
   final TextEditingController _searchController = TextEditingController();
 
   Future _fetchData() async {

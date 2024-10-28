@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mysmk_prakerin/screen/absen_page.dart';
 import 'package:mysmk_prakerin/screen/home.dart';
-import 'package:mysmk_prakerin/screen/profile_page.dart';
 import 'package:mysmk_prakerin/screen/laporan_screen.dart';
+import 'package:mysmk_prakerin/screen/profile_page.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
