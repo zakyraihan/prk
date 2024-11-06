@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:mysmk_prakerin/model/login_gagal_model.dart';
@@ -11,8 +12,8 @@ import 'package:mysmk_prakerin/router/router_name.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  static const String _baseUrl =
-      'https://backend-mysmk-dev.smkmadinatulquran.sch.id';
+  final _baseUrl = dotenv.env['LOCAL_URL'];
+  // 'https://backend-mysmk-dev.smkmadinatulquran.sch.id';
 
   Future prosesLogin(String email, String password) async {
     Uri urlApi = Uri.parse("$_baseUrl/login");

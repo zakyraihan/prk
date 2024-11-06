@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:mysmk_prakerin/model/create_laporan_model.dart';
@@ -14,8 +15,8 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LaporanpklService {
-  static const String _baseUrl =
-      'https://backend-mysmk-dev.smkmadinatulquran.sch.id';
+  final _baseUrl = dotenv.env['LOCAL_URL'];
+  // 'https://backend-mysmk-dev.smkmadinatulquran.sch.id';
 
   Future getLaporanPkl() async {
     final url = Uri.parse('$_baseUrl/santri/laporan-harian-pkl/list');
@@ -133,8 +134,8 @@ class LaporanpklService {
   // }
 
   Future createLaporan(BuildContext context, DataCreateLaporan laporan) async {
-    final Uri url = Uri.parse(
-        'http://192.168.8.86:8085/santri/laporan-harian-pkl/create');
+    final Uri url =
+        Uri.parse('$_baseUrl/santri/laporan-harian-pkl/create');
 
     final Map<String, dynamic> body = {
       "judul_kegiatan": laporan.judulKegiatan,

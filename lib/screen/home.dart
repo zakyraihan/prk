@@ -177,6 +177,7 @@ class _JurnalPKLState extends State<JurnalPKL> {
                 ],
               ),
             ),
+            // laporan pkl
             isFetching
                 ? const Center(child: CircularProgressIndicator())
                 : Padding(
@@ -184,7 +185,7 @@ class _JurnalPKLState extends State<JurnalPKL> {
                     child: _originalData.isNotEmpty
                         ? Wrap(
                             children: List.generate(
-                              _originalData.length,
+                              3,
                               (index) => buildLaporanCard(
                                 _originalData[index],
                                 onTap: () => Navigator.push(
