@@ -1,7 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-
-import 'package:image_picker/image_picker.dart';
 
 // Function to parse the JSON response string
 LaporanUpdateResponse laporanUpdateResponseFromJson(String str) =>
@@ -54,10 +51,11 @@ class DataCreateLaporan {
   int? id;
   String? judulKegiatan;
   String? isiLaporan;
-  File? foto;
+  String? foto;
   double? longtitude;
   double? latitude;
   String? status;
+  bool? isAbsen;
   int? studentId;
   DateTime? tanggal;
   DateTime? updatedAt;
@@ -71,6 +69,7 @@ class DataCreateLaporan {
     this.longtitude,
     this.latitude,
     this.status,
+    this.isAbsen,
     this.studentId,
     this.tanggal,
     this.updatedAt,
@@ -87,6 +86,7 @@ class DataCreateLaporan {
         longtitude: json["longtitude"].toDouble(),
         latitude: json["latitude"].toDouble(),
         status: json["status"],
+        isAbsen: json["is_absen"],
         studentId: json["student_id"],
         tanggal:
             json["tanggal"] == null ? null : DateTime.parse(json["tanggal"]),
@@ -107,6 +107,7 @@ class DataCreateLaporan {
         "longtitude": longtitude,
         "latitude": latitude,
         "status": status,
+        "is_absen": isAbsen,
         "student_id": studentId,
         "tanggal": tanggal?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),

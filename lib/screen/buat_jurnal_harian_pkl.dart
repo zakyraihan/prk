@@ -33,17 +33,19 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
     });
 
     if (_formKey.currentState?.validate() ?? false) {
-      DataCreateLaporan laporan = DataCreateLaporan(
-        judulKegiatan: judulController.text,
-        isiLaporan: isiController.text,
-        foto: _imageFile,
-        longtitude: 8090,
-        latitude: 8090,
-        status: status.toString(),
-        tanggal: _selectedDate,
-      );
+      // DataCreateLaporan laporan = DataCreateLaporan(
+      //   judulKegiatan: judulController.text,
+      //   isiLaporan: isiController.text,
+      //   foto: '',
+      //   longtitude: 8090,
+      //   latitude: 8090,
+      //   status: status.toString(),
+      //   isAbsen: true,
+      //   tanggal: _selectedDate,
+      // );
 
-      await LaporanpklService().createLaporan(context, laporan);
+      await LaporanpklService()
+          .createLaporanPkl(judulController.text, isiController.text, context);
     }
 
     setState(() {
