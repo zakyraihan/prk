@@ -86,6 +86,7 @@ class _LaporanWidgetState extends State<LaporanWidget> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('LAPORAN'),
+        automaticallyImplyLeading: true,
       ),
       endDrawer: filterWidget(context, () => selectDate()),
       body: isFetching

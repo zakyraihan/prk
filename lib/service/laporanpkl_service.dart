@@ -160,64 +160,64 @@ class LaporanpklService {
     }
   }
 
-  Future createLaporan(BuildContext context, DataCreateLaporan laporan) async {
-    final Uri url = Uri.parse('$_baseUrl/santri/laporan-harian-pkl/create');
+  // Future createLaporan(BuildContext context, DataCreateLaporan laporan) async {
+  //   final Uri url = Uri.parse('$_baseUrl/santri/laporan-harian-pkl/create');
 
-    final Map<String, dynamic> body = {
-      "judul_kegiatan": laporan.judulKegiatan,
-      "isi_laporan": laporan.isiLaporan,
-      "foto": "laporan.foto",
-      "longtitude": laporan.longtitude,
-      "latitude": laporan.latitude,
-      "status": laporan.status,
-      "is_absen": laporan.isAbsen,
-      "tanggal": laporan.tanggal?.toIso8601String(),
-    };
+  //   final Map<String, dynamic> body = {
+  //     "judul_kegiatan": laporan.judulKegiatan,
+  //     "isi_laporan": laporan.isiLaporan,
+  //     "foto": "laporan.foto",
+  //     "longtitude": laporan.longtitude,
+  //     "latitude": laporan.latitude,
+  //     "status": laporan.status,
+  //     "is_absen": laporan.isAbsen,
+  //     "tanggal": laporan.tanggal?.toIso8601String(),
+  //   };
 
-    final prefs = await SharedPreferences.getInstance();
-    String? dataLogin = prefs.getString('login');
+  //   final prefs = await SharedPreferences.getInstance();
+  //   String? dataLogin = prefs.getString('login');
 
-    if (dataLogin == null || dataLogin.isEmpty) {
-      log("Token not found.");
-      return null;
-    }
+  //   if (dataLogin == null || dataLogin.isEmpty) {
+  //     log("Token not found.");
+  //     return null;
+  //   }
 
-    LoginModel loginData = loginModelFromJson(dataLogin);
-    String token = 'Bearer ${loginData.token}';
+  //   LoginModel loginData = loginModelFromJson(dataLogin);
+  //   String token = 'Bearer ${loginData.token}';
 
-    final response = await http.post(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "X-Authorization": token,
-      },
-      body: jsonEncode(body),
-    );
+  //   final response = await http.post(
+  //     url,
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "X-Authorization": token,
+  //     },
+  //     body: jsonEncode(body),
+  //   );
 
-    final respondata = jsonDecode(response.body);
+  //   final respondata = jsonDecode(response.body);
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      if (respondata['status'] == 'fail' && respondata['statusCode'] == 400) {
-        showAlert(
-          context,
-          respondata['msg'],
-          respondata['message'],
-          AlertType.error,
-          onPressed: () => context.pop(),
-        );
-      } else {
-        showAlert(
-          context,
-          respondata['msg'],
-          respondata['message'],
-          AlertType.success,
-          onPressed: () => context.pushReplacementNamed(Routes.main),
-        );
+  //   if (response.statusCode == 200 || response.statusCode == 201) {
+  //     if (respondata['status'] == 'fail' && respondata['statusCode'] == 400) {
+  //       showAlert(
+  //         context,
+  //         respondata['msg'],
+  //         respondata['message'],
+  //         AlertType.error,
+  //         onPressed: () => context.pop(),
+  //       );
+  //     } else {
+  //       showAlert(
+  //         context,
+  //         respondata['msg'],
+  //         respondata['message'],
+  //         AlertType.success,
+  //         onPressed: () => context.pushReplacementNamed(Routes.main),
+  //       );
 
-        return laporanUpdateResponseFromJson(response.body);
-      }
-    }
+  //       return laporanUpdateResponseFromJson(response.body);
+  //     }
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 }
