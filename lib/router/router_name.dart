@@ -6,4 +6,5 @@ abstract class Routes {
   static const laporanPkl = 'laporanPkl';
   static const detailLaporanPkl = 'detail_laporan';
   static const buatJurnalPkl = 'buatJurnalPkl';
+  static const tugas = 'tugas';
 }

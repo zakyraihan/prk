@@ -3,13 +3,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
-import 'package:mysmk_prakerin/model/create_laporan_model.dart';
 import 'package:mysmk_prakerin/model/detail_laporanpkl_model.dart';
 import 'package:mysmk_prakerin/model/laporanpkl_model.dart';
 import 'package:mysmk_prakerin/model/login_model.dart';
-import 'package:mysmk_prakerin/router/router_name.dart';
 import 'package:mysmk_prakerin/screen/laporan_screen.dart';
 import 'package:mysmk_prakerin/utils/alert_dialog.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -40,7 +37,7 @@ class LaporanpklService {
     );
 
     if (response.statusCode == 200) {
-      log(response.body);
+      // log(response.body);
       LaporanPrakerin data = laporanPrakerinFromJson(response.body);
       return data.data;
     } else {

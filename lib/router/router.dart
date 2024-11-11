@@ -6,6 +6,7 @@ import 'package:mysmk_prakerin/screen/detail_laporan_screen.dart';
 import 'package:mysmk_prakerin/screen/laporan_screen.dart';
 import 'package:mysmk_prakerin/screen/login.dart';
 import 'package:mysmk_prakerin/screen/splash_screen.dart';
+import 'package:mysmk_prakerin/screen/tugas_screen.dart';
 
 final router = GoRouter(
   routes: <RouteBase>[
@@ -44,7 +45,13 @@ final router = GoRouter(
             return const BuatJurnalHarianPkl();
           },
         ),
-       
+        GoRoute(
+          path: '/tugas',
+          name: Routes.tugas,
+          builder: (context, state) {
+            return const TugasScreen();
+          },
+        ),
       ],
     ),
   ],

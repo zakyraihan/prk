@@ -3,22 +3,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mysmk_prakerin/model/laporanpkl_model.dart';
+import 'package:mysmk_prakerin/model/tugas_model.dart';
 import 'package:mysmk_prakerin/router/router_name.dart';
 import 'package:mysmk_prakerin/screen/detail_laporan_screen.dart';
 import 'package:mysmk_prakerin/service/laporanpkl_service.dart';
+import 'package:mysmk_prakerin/service/tugas_service.dart';
 import 'package:mysmk_prakerin/widget/laporan_widget_card.dart';
-
-class Tugas {
-  final String namaTugas;
-  final String namaGuru;
-  final String tanggal;
-
-  Tugas({
-    required this.namaTugas,
-    required this.namaGuru,
-    required this.tanggal,
-  });
-}
+import 'package:mysmk_prakerin/widget/tugas_widget_card.dart';
 
 class JurnalPKL extends StatefulWidget {
   const JurnalPKL({super.key});
@@ -29,6 +20,7 @@ class JurnalPKL extends StatefulWidget {
 
 class _JurnalPKLState extends State<JurnalPKL> {
   List<DataLaporann> _originalData = [];
+  List<DataTugas> _originalDataTugas = [];
   bool isFetching = false;
 
   Future _fetchData() async {
@@ -48,24 +40,22 @@ class _JurnalPKLState extends State<JurnalPKL> {
     });
   }
 
-  // Contoh daftar tugas
-  final List<Tugas> tugasList = [
-    Tugas(
-      namaTugas: 'Membuat Laporan PKL',
-      namaGuru: 'Pak Nurdiansyah',
-      tanggal: '27 Agustus 2024',
-    ),
-    Tugas(
-      namaTugas: 'Menyiapkan Presentasi',
-      namaGuru: 'Bu Ani',
-      tanggal: '28 Agustus 2024',
-    ),
-    Tugas(
-      namaTugas: 'Kerja Kelompok Proyek',
-      namaGuru: 'Pak Fajar',
-      tanggal: '29 Agustus 2024',
-    ),
-  ];
+  Future _fetchDataTugas() async {
+    setState(() {
+      isFetching = true;
+    });
+    try {
+      final data = await TugasService().getTugas();
+      setState(() {
+        _originalDataTugas = data;
+      });
+    } catch (e) {
+      log('$e');
+    }
+    setState(() {
+      isFetching = false;
+    });
+  }
 
   DateTime? selectedDate;
 
@@ -90,6 +80,7 @@ class _JurnalPKLState extends State<JurnalPKL> {
 
   @override
   void initState() {
+    _fetchDataTugas();
     _fetchData();
     super.initState();
   }
@@ -247,7 +238,7 @@ class _JurnalPKLState extends State<JurnalPKL> {
                     builder: (context) {
                       return InkWell(
                         onTap: () {
-                          // Scaffold.of(context).openEndDrawer()
+                          context.goNamed(Routes.tugas);
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -269,57 +260,23 @@ class _JurnalPKLState extends State<JurnalPKL> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                children: List.generate(
-                  tugasList.length,
-                  (index) {
-                    final tugas = tugasList[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        elevation: 5,
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(10),
-                          title: Text(
-                            tugas.namaTugas,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
+
+            // tugas section
+            isFetching
+                ? const Center(child: CircularProgressIndicator())
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: _originalDataTugas.isNotEmpty
+                        ? Wrap(
+                            children: List.generate(
+                              _originalDataTugas.length,
+                              (index) {
+                                final tugas = _originalDataTugas[index];
+                                return TugasWidgetCard(tugas: tugas);
+                              },
                             ),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                tugas.namaGuru,
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                tugas.tanggal,
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
+                          )
+                        : const Text('tidak ada data')),
           ],
         ),
       ),

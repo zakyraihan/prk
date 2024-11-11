@@ -14,31 +14,31 @@ Widget buildLaporanCard(DataLaporann data, {void Function()? onTap}) {
         elevation: 5,
         child: ListTile(
           contentPadding: const EdgeInsets.all(10),
-          leading: SizedBox(
-              width: 50,
-              height: 50,
-              child: Image.network(
-                data.foto.toString(),
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(
-                    Icons.broken_image,
-                    size: 50,
-                    color: Colors.grey,
-                  );
-                },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                          : null,
-                    ),
-                  );
-                },
-              )),
+          // leading: SizedBox(
+          //     width: 50,
+          //     height: 50,
+          //     child: Image.network(
+          //       data.foto.toString(),
+          //       fit: BoxFit.cover,
+          //       errorBuilder: (context, error, stackTrace) {
+          //         return const Icon(
+          //           Icons.broken_image,
+          //           size: 50,
+          //           color: Colors.grey,
+          //         );
+          //       },
+          //       loadingBuilder: (context, child, loadingProgress) {
+          //         if (loadingProgress == null) return child;
+          //         return Center(
+          //           child: CircularProgressIndicator(
+          //             value: loadingProgress.expectedTotalBytes != null
+          //                 ? loadingProgress.cumulativeBytesLoaded /
+          //                     loadingProgress.expectedTotalBytes!
+          //                 : null,
+          //           ),
+          //         );
+          //       },
+          //     )),
           title: Text(
             data.judulKegiatan ?? 'No Title',
             maxLines: 1,
