@@ -82,6 +82,9 @@ class _TugasScreenState extends State<TugasScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('TUGAS ANDA'),
+      ),
       body: SafeArea(
         child: isFetching
             ? const Center(child: CircularProgressIndicator())
