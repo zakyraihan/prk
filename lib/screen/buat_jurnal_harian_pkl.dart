@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mysmk_prakerin/model/create_laporan_model.dart';
 import 'package:mysmk_prakerin/service/laporanpkl_service.dart';
 
 class BuatJurnalHarianPkl extends StatefulWidget {
@@ -126,7 +125,7 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTextInput(
+              buildTextInput(
                 'Judul Jurnal Harian',
                 judulController,
                 'Masukkan judul jurnal',
@@ -136,7 +135,7 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
               const SizedBox(height: 16),
               _buildImagePicker(),
               const SizedBox(height: 16),
-              _buildTextArea('Deskripsi Jurnal Harian', isiController,
+              buildTextArea('Deskripsi Jurnal Harian', isiController,
                   'Apa yang antum kerjakan hari ini?'),
               const SizedBox(height: 20),
               InkWell(
@@ -168,14 +167,14 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTextInput(
+              buildTextInput(
                   'Alasan Izin', isiController, 'Masukkan Alasan izin'),
               const SizedBox(height: 16),
               _buildDatePicker(context),
               const SizedBox(height: 16),
               _buildImagePicker(),
               const SizedBox(height: 16),
-              _buildTextArea(
+              buildTextArea(
                   'Deskripsi Izin', judulController, 'Deskripsi izin?'),
               const SizedBox(height: 20),
               InkWell(
@@ -193,33 +192,6 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTextInput(
-      String label, TextEditingController controller, String hint) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label),
-        const SizedBox(height: 5),
-        TextFormField(
-          controller: controller,
-          decoration: InputDecoration(
-            hintText: hint,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Field tidak boleh kosong';
-            }
-            return null;
-          },
-        ),
-      ],
     );
   }
 
@@ -282,32 +254,59 @@ class _BuatJurnalHarianPklState extends State<BuatJurnalHarianPkl>
       ],
     );
   }
+}
 
-  Widget _buildTextArea(
-      String label, TextEditingController controller, String hint) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label),
-        const SizedBox(height: 5),
-        TextFormField(
-          controller: controller,
-          maxLines: 5,
-          decoration: InputDecoration(
-            hintText: hint,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+Widget buildTextArea(
+    String label, TextEditingController controller, String hint) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label),
+      const SizedBox(height: 5),
+      TextFormField(
+        controller: controller,
+        maxLines: 5,
+        decoration: InputDecoration(
+          hintText: hint,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
           ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Field tidak boleh kosong';
-            }
-            return null;
-          },
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
         ),
-      ],
-    );
-  }
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Field tidak boleh kosong';
+          }
+          return null;
+        },
+      ),
+    ],
+  );
+}
+
+Widget buildTextInput(
+    String label, TextEditingController controller, String hint) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label),
+      const SizedBox(height: 5),
+      TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: hint,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Field tidak boleh kosong';
+          }
+          return null;
+        },
+      ),
+    ],
+  );
 }

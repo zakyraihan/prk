@@ -6,6 +6,7 @@ import 'package:mysmk_prakerin/model/laporanpkl_model.dart';
 import 'package:mysmk_prakerin/model/tugas_model.dart';
 import 'package:mysmk_prakerin/router/router_name.dart';
 import 'package:mysmk_prakerin/screen/detail_laporan_screen.dart';
+import 'package:mysmk_prakerin/screen/jawaban_screen.dart';
 import 'package:mysmk_prakerin/service/laporanpkl_service.dart';
 import 'package:mysmk_prakerin/service/tugas_service.dart';
 import 'package:mysmk_prakerin/widget/laporan_widget_card.dart';
@@ -272,7 +273,16 @@ class _JurnalPKLState extends State<JurnalPKL> {
                               _originalDataTugas.length,
                               (index) {
                                 final tugas = _originalDataTugas[index];
-                                return TugasWidgetCard(tugas: tugas);
+                                return TugasWidgetCard(
+                                    tugas: tugas,
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) => JawabanScreen(
+                                          id: tugas.id.toString(),
+                                        ),
+                                      ));
+                                    });
                               },
                             ),
                           )
