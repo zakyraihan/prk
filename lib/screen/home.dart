@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mysmk_prakerin/model/laporanpkl_model.dart';
@@ -79,11 +81,61 @@ class _JurnalPKLState extends State<JurnalPKL> {
   final List<String> items = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
   String? selectedValue;
 
+  late StreamSubscription connSub;
+
+  String statusCheck = 'Check your connectivity noew';
+  Color statusColor = Colors.transparent;
+
+  checkConnectivity() async {
+    setState(() {
+      statusCheck = 'Checking...';
+    });
+
+    final List<ConnectivityResult> connectivityResult =
+        await (Connectivity().checkConnectivity());
+
+    if (connectivityResult.contains(ConnectivityResult.mobile)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.blue,
+          duration: Duration(seconds: 10),
+          content: Text('Connected to mobile network'),
+        ),
+      );
+    } else if (connectivityResult.contains(ConnectivityResult.wifi)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 10),
+          content: Text('Connected to wifi network'),
+        ),
+      );
+    } else if (connectivityResult.contains(ConnectivityResult.none)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 10),
+          content: Text('No internet connection'),
+        ),
+      );
+    }
+  }
+
   @override
   void initState() {
+    StreamSubscription<List<ConnectivityResult>> subscription =
+        Connectivity().onConnectivityChanged.listen((result) async {
+      checkConnectivity();
+    });
     _fetchDataTugas();
     _fetchData();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    connSub.cancel();
+    super.dispose();
   }
 
   @override

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:mysmk_prakerin/screen/absen_page.dart';
 import 'package:mysmk_prakerin/screen/home.dart';
@@ -26,6 +29,8 @@ class _MainScreenState extends State<MainScreen> {
       currentIndex = index;
     });
   }
+
+ 
 
   @override
   Widget build(BuildContext context) {

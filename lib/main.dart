@@ -6,11 +6,14 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:mysmk_prakerin/provider/camera_provider.dart';
 import 'package:mysmk_prakerin/router/router.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
   await initializeDateFormatting('id_ID', null);
   runApp(MyApp());
+
+  
 }
 
 class MyApp extends StatelessWidget {

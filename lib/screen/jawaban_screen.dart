@@ -45,13 +45,13 @@ class _JawabanScreenState extends State<JawabanScreen> {
     final lebar = MediaQuery.of(context).size.width;
 
     return DefaultTabController(
-      length: 2, // Number of tabs
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           title: Text('Jawaban dengan id ${widget.id}'),
           bottom: const TabBar(
             tabs: [
-              Tab(text: 'Create Jawaban'),
+              Tab(text: 'Kirim Jawaban'),
               Tab(text: 'Revisi Jawaban'),
             ],
           ),

@@ -2,14 +2,13 @@ import 'package:go_router/go_router.dart';
 import 'package:mysmk_prakerin/main_screen.dart';
 import 'package:mysmk_prakerin/router/router_name.dart';
 import 'package:mysmk_prakerin/screen/buat_jurnal_harian_pkl.dart';
-import 'package:mysmk_prakerin/screen/detail_laporan_screen.dart';
 import 'package:mysmk_prakerin/screen/laporan_screen.dart';
 import 'package:mysmk_prakerin/screen/login.dart';
 import 'package:mysmk_prakerin/screen/splash_screen.dart';
 import 'package:mysmk_prakerin/screen/tugas_screen.dart';
 
 final router = GoRouter(
-  routes: <RouteBase>[
+  routes: [
     GoRoute(
       path: '/',
       name: Routes.splash,
