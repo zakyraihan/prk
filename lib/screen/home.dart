@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mysmk_prakerin/controller/location_controller.dart';
 import 'package:mysmk_prakerin/model/laporanpkl_model.dart';
 import 'package:mysmk_prakerin/model/tugas_model.dart';
 import 'package:mysmk_prakerin/router/router_name.dart';
@@ -83,60 +85,14 @@ class _JurnalPKLState extends State<JurnalPKL> {
 
   late StreamSubscription connSub;
 
-  String statusCheck = 'Check your connectivity noew';
-  Color statusColor = Colors.transparent;
-
-  checkConnectivity() async {
-    setState(() {
-      statusCheck = 'Checking...';
-    });
-
-    final List<ConnectivityResult> connectivityResult =
-        await (Connectivity().checkConnectivity());
-
-    if (connectivityResult.contains(ConnectivityResult.mobile)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.blue,
-          duration: Duration(seconds: 10),
-          content: Text('Connected to mobile network'),
-        ),
-      );
-    } else if (connectivityResult.contains(ConnectivityResult.wifi)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 10),
-          content: Text('Connected to wifi network'),
-        ),
-      );
-    } else if (connectivityResult.contains(ConnectivityResult.none)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 10),
-          content: Text('No internet connection'),
-        ),
-      );
-    }
-  }
-
   @override
   void initState() {
-    StreamSubscription<List<ConnectivityResult>> subscription =
-        Connectivity().onConnectivityChanged.listen((result) async {
-      checkConnectivity();
-    });
     _fetchDataTugas();
     _fetchData();
     super.initState();
   }
 
-  @override
-  void dispose() {
-    connSub.cancel();
-    super.dispose();
-  }
+  final LocationController locationController = LocationController();
 
   @override
   Widget build(BuildContext context) {
@@ -153,12 +109,93 @@ class _JurnalPKLState extends State<JurnalPKL> {
                 Container(
                   height: 250,
                   width: lebar,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5),
+                    image: const DecorationImage(
                       image: AssetImage(
                           'images/Penerimaan-siswa-magang-SMKN-1-BANTUL-2-1.jpg'),
                       fit: BoxFit.cover,
                     ),
+                  ),
+                  child: FutureBuilder<Placemark?>(
+                    future: locationController.getLocationUser(),
+                    builder: (context, snapshot) {
+                      print(snapshot);
+                      if (snapshot.connectionState == ConnectionState.waiting ||
+                          snapshot.data == null) {
+                        return const Scaffold(
+                            body: CircularProgressIndicator());
+                      } else {
+                        final placemark = snapshot.data!;
+
+                        final subAdministrativeArea =
+                            placemark.subAdministrativeArea;
+
+                        return SafeArea(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 15),
+                            child: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.start,
+                              runSpacing: 10,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                          vertical: 4, horizontal: 10)
+                                      .w,
+                                  decoration: BoxDecoration(
+                                    boxShadow: const [
+                                      BoxShadow(
+                                          color: Colors.black12,
+                                          blurRadius: 7,
+                                          spreadRadius: 0.5,
+                                          offset: Offset(0, 2))
+                                    ],
+                                    color: Colors.black26,
+                                    borderRadius: BorderRadius.circular(25).w,
+                                  ),
+                                  child: Wrap(
+                                    spacing: 10,
+                                    alignment: WrapAlignment.center,
+                                    crossAxisAlignment:
+                                        WrapCrossAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.location_city,
+                                        size: 12.sp,
+                                        color: Colors.white,
+                                      ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Lokasi anda saat ini",
+                                            style: TextStyle(
+                                                color: Colors.white70,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 8.sp),
+                                          ),
+                                          Text(
+                                            subAdministrativeArea ?? 'null',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 10.sp),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ),
                 Container(
